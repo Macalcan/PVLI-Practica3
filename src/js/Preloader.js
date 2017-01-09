@@ -36,6 +36,11 @@ Game.Preloader.prototype = {
 		this.load.image('start', 'assets/start.png');
 		this.load.image('about', 'assets/about.png');
 
+		//botones menu pausa
+		this.load.image('pause', 'assets/buttons-2/pause-2.png');
+
+		//Crear botones del menu de pausa.
+
 	},
 
 	create: function() {

@@ -177,6 +177,8 @@ Game.Level1.prototype = {
 		if (checkOverlap(nuts, enemy1.bird)) {
 			enemy1.bird.kill();
 		}
+		if(this.input.keyboard.addKey(Phaser.Keyboard.P))
+			this.pausa();
 
 	},
 
@@ -199,6 +201,9 @@ Game.Level1.prototype = {
 		map.putTile(-1, layer.getTileX(player.x), layer.getTileY(player.y));
 
 		playerXP += 15;
+	},
+	pausa: function(){
+		this.state.start('PauseMenu');
 	},
 
 	shootNut: function() {
