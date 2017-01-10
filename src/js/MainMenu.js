@@ -23,8 +23,9 @@ Game.MainMenu.prototype = {
 			console.log('About');
 		});
 
-		titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 190, 'titlescreen');
-		titlescreen.anchor.setTo(0.5, 0.5);
+		/*titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 190, 'titlescreen');
+		titlescreen.anchor.setTo(0.5, 0.5);*/
+
 	},
 
 	update: function(game) {

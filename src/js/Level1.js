@@ -1,6 +1,10 @@
+<<<<<<< HEAD
+
+=======
 //'use strict';
 
 //var PauseMenu = require ('./PauseMenu.js');
+>>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
 
 EnemyBird = function (index, game, x, y) {
 	
@@ -29,11 +33,13 @@ var layer;
 
 var player;
 var control = {};
-var playerSpeed = 150;
+var playerSpeed = 300;
 var jumpTimer = 0;
 
 var button;
-
+var button2;
+var play;
+var menu;
 var drag;
 
 var shootTime = 0;
@@ -54,9 +60,11 @@ var jumping;
 var shooting;
 
 Game.Level1.prototype = {
+	
 
 	create: function (game) {
 		
+
 		this.stage.backgroundColor = '#3A5963';
 
 		this.physics.arcade.gravity.y = 1400;
@@ -115,7 +123,7 @@ Game.Level1.prototype = {
 		this.physics.arcade.enable(drag);
 		drag.body.colliderWorldBounds = true;
 
-		enemy1 = new EnemyBird(0, game, player.x + 400, player.y - 200);
+		enemy1 = new EnemyBird(0, game, player.x + 400, player.y - 10);
 
 		nuts = game.add.group();
 		nuts.enableBody = true;
@@ -165,7 +173,7 @@ Game.Level1.prototype = {
 
 		if ((controls.up.isDown || jumping) && (player.body.onFloor() ||
 			player.body.touching.down) && this.time.now > jumpTimer) {
-			player.body.velocity.y = -600;
+			player.body.velocity.y = -800;
 			jumpTimer = this.time.now + 750;
 			player.animations.play('jump');
 		}
@@ -182,11 +190,27 @@ Game.Level1.prototype = {
 		if (checkOverlap(nuts, enemy1.bird)) {
 			enemy1.bird.kill();
 		}
+<<<<<<< HEAD
+
+		if(controls.pause.isDown)
+		{
+			 
+             this.pause();
+
+		}
+
+			//this.game.paused = true; 
+		/*if(this.input.keyboard.addKey(Phaser.Keyboard.P))
+			this.game.paused = true; 
+			//this.pausa();*/
+
+=======
 		if(controls.pause.isDown){
 			this.pausa();
 			this.game.pause = true;
 		}
 			
+>>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
 
 	},
 
@@ -210,11 +234,55 @@ Game.Level1.prototype = {
 
 		playerXP += 15;
 	},
+<<<<<<< HEAD
+	 
+	
+=======
 	pausa: function(){
 		PauseMenu.pause(this.game);
 		//console.log('pausa');
 	},
+>>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
 
+  	pause: function(){
+  		//Keep on playing
+    	this.game.paused = true;
+  	 	this.play = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 200, 'play');
+ 	 	this.play.anchor.set(0.5);
+
+ 	 	this.play.inputEnabled = true;
+ 	 	this.game.input.onDown.add(this.onClick, this);
+  		
+   
+  		//Main Menu
+ 	 	this.menu = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 300, 'mainmenu');
+  		this.menu.anchor.set(0.5);
+
+  		this.menu.inputEnabled = true;
+ 	 	this.game.input.onDown.add(this.onClick, this);
+
+  
+  	},
+  	onClick: function  (event){
+      if(this.play.getBounds().contains(event.x,event.y)){
+          this.unpause();
+      }
+      else if(this.menu.getBounds().contains(event.x,event.y)){
+          this.game.paused = false;
+          this.game.state.start('MainMenu');
+      }
+  },
+  	unpause: function(){
+      	this.game.paused = false;
+      	this.destroyButtons();
+    	
+  	},
+
+  	destroyButtons: function(){
+  		this.play.kill();
+  		this.menu.kill();
+	},
+	
 	shootNut: function() {
 		if(this.time.now > shootTime) {
 			nut = nuts.getFirstExists(false);
@@ -264,3 +332,6 @@ function checkOverlap (spriteA, spriteB) {
 
 	return Phaser.Rectangle.intersects(boundsA, boundsB);
 }
+
+
+//destruir todo
