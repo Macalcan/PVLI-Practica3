@@ -1,9 +1,19 @@
-Game.PauseMenu=function(game){};
+
+
+pause: function (game) {
+    this.game = game;
+    console.log('pausa');
+
+        
+    //if(pause.isDown)
+        this.game.pause = false;
+}
+/*Game.PauseMenu=function(game){};
 Game.PauseMenu.prototype = {
 
     /*
         Code for the pause menu
-    */
+    
     create: function (game){
     // Create a label to use as a button
     pause_label = game.add.text(w - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
@@ -57,5 +67,4 @@ Game.PauseMenu.prototype = {
             }
         }
     };
-}
-
+}*/

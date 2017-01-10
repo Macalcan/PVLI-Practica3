@@ -1,3 +1,7 @@
+//'use strict';
+
+//var PauseMenu = require ('./PauseMenu.js');
+
 EnemyBird = function (index, game, x, y) {
 	
 	this.bird = game.add.sprite(x, y, 'bird');
@@ -95,6 +99,7 @@ Game.Level1.prototype = {
 			left: this.input.keyboard.addKey(Phaser.Keyboard.A),
 			up: this.input.keyboard.addKey(Phaser.Keyboard.W),
 			shoot: this.input.keyboard.addKey(Phaser.Keyboard.UP),
+			pause: this.input.keyboard.addKey(Phaser.Keyboard.ESC),
 		};
 
 		button = this.add.button(this.world.centerX - 95, this.world.centerY + 200, 'buttons', function(){
@@ -177,8 +182,11 @@ Game.Level1.prototype = {
 		if (checkOverlap(nuts, enemy1.bird)) {
 			enemy1.bird.kill();
 		}
-		if(this.input.keyboard.addKey(Phaser.Keyboard.P))
+		if(controls.pause.isDown){
 			this.pausa();
+			this.game.pause = true;
+		}
+			
 
 	},
 
@@ -203,7 +211,8 @@ Game.Level1.prototype = {
 		playerXP += 15;
 	},
 	pausa: function(){
-		this.state.start('PauseMenu');
+		PauseMenu.pause(this.game);
+		//console.log('pausa');
 	},
 
 	shootNut: function() {
