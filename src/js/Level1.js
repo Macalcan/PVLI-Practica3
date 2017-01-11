@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-
-=======
-//'use strict';
-
-//var PauseMenu = require ('./PauseMenu.js');
->>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
 
 EnemyBird = function (index, game, x, y) {
 	
@@ -190,33 +183,19 @@ Game.Level1.prototype = {
 		if (checkOverlap(nuts, enemy1.bird)) {
 			enemy1.bird.kill();
 		}
-<<<<<<< HEAD
 
-		if(controls.pause.isDown)
-		{
-			 
-             this.pause();
-
-		}
-
-			//this.game.paused = true; 
-		/*if(this.input.keyboard.addKey(Phaser.Keyboard.P))
-			this.game.paused = true; 
-			//this.pausa();*/
-
-=======
 		if(controls.pause.isDown){
 			this.pausa();
 			this.game.pause = true;
 		}
 			
->>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
+
 
 	},
 
 	resetPlayer: function() {
 
-		player.reset(100, 560);
+		this.game.state.start('GameOver');
 	},
 
 	spawn: function() {
@@ -224,6 +203,7 @@ Game.Level1.prototype = {
 		respawn.forEach(function(spawnPoint){
 
 			player.reset(spawnPoint.x, spawnPoint.y);
+
 
 		}, this);
 	},
@@ -234,15 +214,11 @@ Game.Level1.prototype = {
 
 		playerXP += 15;
 	},
-<<<<<<< HEAD
-	 
-	
-=======
-	pausa: function(){
-		PauseMenu.pause(this.game);
+
+		pausa: function(){
+		this.pause(this.game);
 		//console.log('pausa');
 	},
->>>>>>> c4064eadf7c3191728ac2580802c7e9ddb3e7f6d
 
   	pause: function(){
   		//Keep on playing
