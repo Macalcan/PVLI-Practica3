@@ -137,10 +137,10 @@ Game.Level1.prototype = {
 		
 	},
 
-	update: function() {
-
+	update: function(game) {
+		
 		this.physics.arcade.collide(player, layer);
-		this.physics.arcade.collide(player, enemy1.bird, this.resetPlayer);
+		this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
 		player.body.velocity.x = 0;
 		
@@ -186,24 +186,26 @@ Game.Level1.prototype = {
 
 		if(controls.pause.isDown){
 			this.pausa();
-			this.game.pause = true;
+			game.pause = true;
 		}
 			
 
 
 	},
 
-	resetPlayer: function() {
 
+	
+
+	dead: function(){
+		this.destruir;
 		this.game.state.start('GameOver');
 	},
-
 	spawn: function() {
 
 		respawn.forEach(function(spawnPoint){
 
 			player.reset(spawnPoint.x, spawnPoint.y);
-
+			this.restaVida;
 
 		}, this);
 	},
@@ -245,6 +247,7 @@ Game.Level1.prototype = {
       }
       else if(this.menu.getBounds().contains(event.x,event.y)){
           this.game.paused = false;
+          this.destruir;
           this.game.state.start('MainMenu');
       }
   },
@@ -297,6 +300,13 @@ Game.Level1.prototype = {
 		}, this);
 	},
 
+	destruir: function () {
+
+        this.map.destroy();
+        this.layer.destroy();
+        this.player.destroy();
+        this.enemy1.destroy();
+    },
 
 };
 

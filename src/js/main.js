@@ -21,7 +21,7 @@ window.onload = function () {
 	game.state.add('MainMenu', Game.MainMenu);
 	game.state.add('Level1', Game.Level1);
 	game.state.add('PauseMenu', Game.PauseMenu);
-	game.state.add('GameOver',Game.GameOver);
+	game.state.add('GameOver', Game.GameOver);
 	game.state.start('Boot');
 
 
