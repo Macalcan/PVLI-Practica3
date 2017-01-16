@@ -113,7 +113,7 @@ var Level1 = {
         this.physics.arcade.enable(drag);
         drag.body.colliderWorldBounds = true;
 
-        enemy1 = new EnemyBird(0, this.game, player.x + 400, player.y - 10);
+        enemy1 = new EnemyBird(0, this.game, player.x + 400, player.y - 250);
 
         nuts = this.game.add.group();
         nuts.enableBody = true;
@@ -184,11 +184,11 @@ var Level1 = {
             game.pause = true;
         }
 
-      
+        console.log("monedas: " + numCoins);
 
-        if(numCoins == 3){
+        /*if(numCoins == 3){
             this.game.state.start('endLevel');
-        }
+        }*/
     },
     
     
@@ -211,6 +211,7 @@ var Level1 = {
         map.putTile(-1, layer.getTileX(player.x), layer.getTileY(player.y));
 
         playerXP += 15;
+        numCoins++;
        
     },
 
