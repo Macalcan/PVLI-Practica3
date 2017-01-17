@@ -116,7 +116,9 @@ var PreloaderScene = {
     this.load.tilemap('map', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image('tileset', 'assets/tileset.png');
 
-    this.load.spritesheet('player', 'assets/player.png', 24, 26);
+    //this.load.spritesheet('player', 'assets/player.png', 24, 26);
+
+    this.load.spritesheet('player', 'assets/charlie_SpriteSheet.png', 24, 26);
 
     this.load.spritesheet('buttons', 'assets/buttons.png', 193, 71);
 
@@ -330,14 +332,16 @@ var controls;
 var padXBOX;
 var buttonA;
 var buttonX;
+var buttonB;
 var jumping;
 var shooting;
+var attacking;
 var numCoins = 0;
-//Scena de juego.
+//Escena de juego.
 var Level1 = {
 
     //Método constructor...
-  create: function () {
+  create: function (game) {
     this.stage.backgroundColor = '#3A5963';
 
         this.physics.arcade.gravity.y = 1400;
@@ -368,8 +372,10 @@ var Level1 = {
         this.spawn();
 
         player.animations.add('idle', [0,1], 2, true);
-        player.animations.add('jump', [2], 1, true);
-        player.animations.add('run', [3, 4, 5, 6, 7, 8], 7, true);
+        player.animations.add('jump', [10, 11, 12], 1, true);
+        player.animations.add('run', [2, 3, 4, 5], 7, true);
+        player.animations.add('attack', [6, 7, 8, 9], 7, true);
+
 
         this.physics.arcade.enable(player);
         this.camera.follow(player);
@@ -380,6 +386,7 @@ var Level1 = {
             left: this.input.keyboard.addKey(Phaser.Keyboard.A),
             up: this.input.keyboard.addKey(Phaser.Keyboard.W),
             shoot: this.input.keyboard.addKey(Phaser.Keyboard.UP),
+            attack: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
             pause: this.input.keyboard.addKey(Phaser.Keyboard.ESC),
         };
 
@@ -396,7 +403,7 @@ var Level1 = {
         this.physics.arcade.enable(drag);
         drag.body.colliderWorldBounds = true;
 
-        enemy1 = new EnemyBird(0, this.game, player.x + 400, player.y - 10);
+        enemy1 = new EnemyBird(0, this.game, player.x + 400, player.y - 250);
 
         nuts = this.game.add.group();
         nuts.enableBody = true;
@@ -410,8 +417,8 @@ var Level1 = {
         nuts.setAll('checkWorldBounds', true);
 
 
-        this.game.input.gamepad.start();
-        padXBOX = this.game.input.gamepad.pad1;
+        game.input.gamepad.start();
+        padXBOX = game.input.gamepad.pad1;
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
   },
     
@@ -456,7 +463,13 @@ var Level1 = {
         if(controls.shoot.isDown || shooting) {
             this.shootNut();
 
-        } 
+        }
+
+        if((player.body.onFloor() ||
+            player.body.touching.down) && controls.attack.isDown || attacking) {
+            player.animations.play ('attack');
+
+        }  
 
         if (checkOverlap(nuts, enemy1.bird)) {
             enemy1.bird.kill();
@@ -467,11 +480,11 @@ var Level1 = {
             game.pause = true;
         }
 
-      
+        console.log("monedas: " + numCoins);
 
-        if(numCoins == 3){
+        /*if(numCoins == 3){
             this.game.state.start('endLevel');
-        }
+        }*/
     },
     
     
@@ -494,6 +507,7 @@ var Level1 = {
         map.putTile(-1, layer.getTileX(player.x), layer.getTileY(player.y));
 
         playerXP += 15;
+        numCoins++;
        
     },
 
@@ -563,6 +577,7 @@ var Level1 = {
     addButons: function () {
         buttonA = padXBOX.getButton(Phaser.Gamepad.XBOX360_A);
         buttonX = padXBOX.getButton(Phaser.Gamepad.XBOX360_X);
+        buttonB = padXBOX.getButton(Phaser.Gamepad.XBOX360_B);
 
         buttonA.onDown.add(function(){
             jumping = true;
@@ -578,6 +593,14 @@ var Level1 = {
 
         buttonX.onUp.add(function(){
             shooting = false;
+        }, this);
+
+        buttonB.onDown.add(function(){
+            attacking = true;
+        }, this);
+
+        buttonB.onUp.add(function(){
+            attacking = false;
         }, this);
     },
 
