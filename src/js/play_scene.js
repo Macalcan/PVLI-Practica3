@@ -79,6 +79,13 @@ var Level1 = {
 
         map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
+        this.musica = this.game.add.audio('musica');
+
+
+
+        this.salto = this.game.add.audio('salto');
+        this.musica.loopFull();
+
 
 
         player = this.add.sprite(0, 0, 'player');
@@ -169,6 +176,7 @@ var Level1 = {
             player.body.velocity.y = -800;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
+            this.salto.play();
         }
 
         if (player.body.velocity.x == 0 && player.body.velocity.y == 0) {

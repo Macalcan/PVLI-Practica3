@@ -71,6 +71,10 @@ var PreloaderScene = {
     //botones menu pausa
     this.load.image('mainmenu', 'assets/mainmenu.png');
     this.load.image('play', 'assets/play.png');
+
+
+    this.game.load.audio('musica', "Musica/musica.ogg");
+    this.game.load.audio('salto', "Musica/salto.wav");
     //Crear botones del menu de pausa.
 
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
