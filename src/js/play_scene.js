@@ -80,9 +80,7 @@ var Level1 = {
         map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
         this.musica = this.game.add.audio('musica');
-
-
-
+        this.muerte = this.game.add.audio('muerte');
         this.salto = this.game.add.audio('salto');
         this.musica.loopFull();
 
@@ -149,6 +147,7 @@ var Level1 = {
         this.physics.arcade.collide(player, layer);
         this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
+
         player.body.velocity.x = 0;
         
         playerLevel = Math.log(playerXP, gameXPsteps);
@@ -196,6 +195,7 @@ var Level1 = {
 
         if (checkOverlap(nuts, enemy1.bird)) {
             enemy1.bird.kill();
+            this.muerte.play();
         }
 
         if(controls.pause.isDown){
