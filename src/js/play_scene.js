@@ -8,10 +8,10 @@ function EnemyBird (index, game, x, y) {
     game.physics.enable(this.bird, Phaser.Physics.ARCADE);
     this.bird.body.immovable = true;
     this.bird.body.collideWorldBounds = true;
-    this.bird.body.allowGravity = false;
+    this.bird.body.allowGravity = true;
 
     this.birdTween = game.add.tween(this.bird).to({
-        y: this.bird.y + 100
+        x: this.bird.x + 100
     }, 2000, 'Linear', true, 0, 100, true);
 
 };
@@ -79,10 +79,10 @@ var Level1 = {
 
         map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
-        this.musica = this.game.add.audio('musica');
-        this.muerte = this.game.add.audio('muerte');
-        this.salto = this.game.add.audio('salto');
-        this.musica.loopFull();
+        //this.musica = this.game.add.audio('musica');
+        //this.muerte = this.game.add.audio('muerte');
+        //this.salto = this.game.add.audio('salto');
+        //this.musica.loopFull();
 
 
 
@@ -148,13 +148,36 @@ var Level1 = {
         this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
 
+
         player.body.velocity.x = 0;
         
         playerLevel = Math.log(playerXP, gameXPsteps);
         console.log('Level: ' + Math.floor(playerLevel));
 
+        this.movement();
+         
 
-        if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
+        if (checkOverlap(nuts, enemy1.bird)) {
+            enemy1.bird.kill();
+            this.muerte.play();
+        }
+
+        
+
+        if(controls.pause.isDown){
+            this.pausa();
+            game.pause = true;
+        }
+
+        console.log("monedas: " + numCoins);
+
+        /*if(numCoins == 3){
+            this.game.state.start('endLevel');
+        }*/
+    },
+    
+    movement: function(){
+    	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
             padXBOX.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {
             if (player.body.onFloor() ||player.body.touching.down)
                 player.animations.play('run');
@@ -175,7 +198,7 @@ var Level1 = {
             player.body.velocity.y = -800;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
-            this.salto.play();
+            //this.salto.play();
         }
 
         if (player.body.velocity.x == 0 && player.body.velocity.y == 0) {
@@ -191,25 +214,8 @@ var Level1 = {
             player.body.touching.down) && controls.attack.isDown || attacking) {
             player.animations.play ('attack');
 
-        }  
-
-        if (checkOverlap(nuts, enemy1.bird)) {
-            enemy1.bird.kill();
-            this.muerte.play();
-        }
-
-        if(controls.pause.isDown){
-            this.pausa();
-            game.pause = true;
-        }
-
-        console.log("monedas: " + numCoins);
-
-        /*if(numCoins == 3){
-            this.game.state.start('endLevel');
-        }*/
+        } 
     },
-    
     
     dead: function(){
         this.destruir;
