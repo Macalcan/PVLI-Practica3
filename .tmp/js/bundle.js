@@ -142,6 +142,8 @@ var PreloaderScene = {
     this.load.image('mainmenu', 'assets/mainmenu.png');
     this.load.image('play', 'assets/play.png');
 
+	this.load.image('muelle', 'assets/springboardDown.png')
+
     this.game.load.audio('muerte', "Musica/muerte.wav");
     this.game.load.audio('musica', "Musica/musica.mp3");
     this.game.load.audio('salto', "Musica/salto.wav");
@@ -487,6 +489,12 @@ var Level1 = {
     	platform1.body.allowGravity = false;
 
         platform2 = new platformY(0, this.game, 350, 500, 50)
+
+        this.muelle = game.add.sprite(200,500, 'muelle');
+        this.muelle.anchor.setTo(0.5, 0.5);
+        this.physics.arcade.enable(this.muelle);
+        this.muelle.body.immovable = true;
+        this.muelle.body.allowGravity = true;
       
   },
     move: function(platform, x, maxX){
@@ -498,9 +506,18 @@ var Level1 = {
     //IS called one per frame.
     update: function () {
         this.physics.arcade.collide(player, layer);
+        this.physics.arcade.collide(this.muelle, layer);
+       // this.physics.arcade.collide(this.muelle, player);
+
+        if(this.physics.arcade.collide(this.muelle, player) 
+        	&& player.body.y < this.muelle.body.y){
+        	player.body.velocity.y = -800;
+        	console.log("arriba");
+        }
+
         this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
-        this.physics.arcade.collide(player, platform1)
+        this.physics.arcade.collide(player, platform1);
      
         this.move(platform1, 280, 360);
         

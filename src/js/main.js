@@ -74,6 +74,8 @@ var PreloaderScene = {
     this.load.image('mainmenu', 'assets/mainmenu.png');
     this.load.image('play', 'assets/play.png');
 
+	this.load.image('muelle', 'assets/springboardDown.png')
+
     this.game.load.audio('muerte', "Musica/muerte.wav");
     this.game.load.audio('musica', "Musica/musica.mp3");
     this.game.load.audio('salto', "Musica/salto.wav");
