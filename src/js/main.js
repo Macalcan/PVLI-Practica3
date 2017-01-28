@@ -56,6 +56,8 @@ var PreloaderScene = {
 
     this.load.image('drag', 'assets/drag.png');
 
+    this.load.image('platform', 'assets/platform.png');
+
     this.load.image('bird', 'assets/bird.png');
 
     this.load.image('nut', 'assets/nut.png');

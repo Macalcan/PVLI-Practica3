@@ -124,6 +124,8 @@ var PreloaderScene = {
 
     this.load.image('drag', 'assets/drag.png');
 
+    this.load.image('platform', 'assets/platform.png');
+
     this.load.image('bird', 'assets/bird.png');
 
     this.load.image('nut', 'assets/nut.png');
@@ -297,13 +299,53 @@ function EnemyBird (index, game, x, y) {
     game.physics.enable(this.bird, Phaser.Physics.ARCADE);
     this.bird.body.immovable = true;
     this.bird.body.collideWorldBounds = true;
-    this.bird.body.allowGravity = true;
+    this.bird.body.allowGravity = false;
 
     this.birdTween = game.add.tween(this.bird).to({
         x: this.bird.x + 100
     }, 2000, 'Linear', true, 0, 100, true);
 
+
+
 };
+
+function platformX (index, game, x, y, maxX) {
+    
+    this.platform = game.add.sprite(x, y, 'platform');
+    this.platform.anchor.setTo(0.5, 0.5);
+    //this.platform.name = index.toString();
+    game.physics.enable(this.platform, Phaser.Physics.ARCADE);
+    this.platform.body.immovable = true;
+    this.platform.body.collideWorldBounds = true;
+    this.platform.body.allowGravity = false;
+
+    this.platformTween = game.add.tween(this.platform, maxX).to({
+        x: this.platform.x + maxX
+    }, 2000, 'Linear', true, 0, 100, true);
+
+
+
+};
+
+function platformY (index, game, x, y, maxY) {
+    
+    this.platform = game.add.sprite(x, y, 'platform');
+    this.platform.anchor.setTo(0.5, 0.5);
+    this.platform.name = index.toString();
+    game.physics.enable(this.platform, Phaser.Physics.ARCADE);
+    this.platform.body.immovable = true;
+    this.platform.body.collideWorldBounds = true;
+    this.platform.body.allowGravity = false;
+
+    this.platformTween = game.add.tween(this.platform, maxY).to({
+        y: this.platform.y + maxY
+    }, 2000, 'Linear', true, 0, 100, true);
+
+
+
+};
+
+
 
 
 var enemy1;
@@ -341,6 +383,10 @@ var jumping;
 var shooting;
 var attacking;
 var numCoins = 0;
+
+var platform1;
+var platform2;
+
 //Escena de juego.
 var Level1 = {
 
@@ -414,6 +460,7 @@ var Level1 = {
 
         enemy1 = new EnemyBird(0, this.game, player.x + 400, player.y - 250);
 
+
         nuts = this.game.add.group();
         nuts.enableBody = true;
         nuts.physicsBodyType = Phaser.Physics.ARCADE;
@@ -429,14 +476,35 @@ var Level1 = {
         game.input.gamepad.start();
         padXBOX = game.input.gamepad.pad1;
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
+
+        //platform1 = new platformX(0, this.game, 200, 500, 50);
+
+        platform1 = game.add.sprite(280, 500, 'platform');
+    	platform1.anchor.setTo(0.5, 0.5);
+     	this.physics.arcade.enable(platform1);
+     	platform1.body.immovable = true;
+    	platform1.body.collideWorldBounds = true;
+    	platform1.body.allowGravity = false;
+
+        platform2 = new platformY(0, this.game, 350, 500, 50)
+      
   },
-    
+    move: function(platform, x, maxX){
+    	if(platform.x >= maxX)
+    		platform.body.velocity.x = -50;
+    	else if(platform.x <= x)
+    		platform.body.velocity.x = 50;
+    },
     //IS called one per frame.
     update: function () {
         this.physics.arcade.collide(player, layer);
         this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
-
+        this.physics.arcade.collide(player, platform1)
+     
+        this.move(platform1, 280, 360);
+        
+        this.physics.arcade.collide(player, platform2.platform);
 
         player.body.velocity.x = 0;
         
@@ -456,6 +524,7 @@ var Level1 = {
             game.pause = true;
         }
 
+        
         console.log("monedas: " + numCoins);
 
         /*if(numCoins == 3){
@@ -463,6 +532,7 @@ var Level1 = {
         }*/
     },
     
+
     movement: function(){
     	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
             padXBOX.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {
