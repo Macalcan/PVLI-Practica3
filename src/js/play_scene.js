@@ -228,15 +228,17 @@ var Level1 = {
         	player.body.velocity.y = -800;
         }
 
-        if(this.physics.arcade.collide(player, this.nurse) && !controls.attack.isDown){
-        	this.dead();
+        if(this.physics.arcade.collide(player, this.nurse)
+             && player.body.y < this.nurse.body.y){
+        	this.nurse.destroy();
         	
         }
-        else if(checkOverlap(player, this.nurse) && controls.attack.isDown){
-        	this.nurse.destroy();
-        	console.log('muere');
+        else if(checkOverlap(player, this.nurse)){
+        	
+        	this.dead();
         }
 
+        
 
         //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
