@@ -1,5 +1,7 @@
 'use strict';
 
+// node ./node_modules/gulp/bin/gulp run
+
 function EnemyBird (index, game, x, y) {
     
     this.bird = game.add.sprite(x, y, 'bird');
@@ -128,7 +130,12 @@ var Level1 = {
         //this.salto = this.game.add.audio('salto');
         //this.musica.loopFull();
 
-
+        this.nurse = this.add.sprite(570, 300, 'nurse');
+        this.nurse.anchor.setTo(0.5, 0.5);
+        this.nurse.animations.add('walk', [0,1,2,3], 7, true);
+        this.physics.arcade.enable(this.nurse);
+		this.nurse.body.colliderWorldBounds = true;
+		this.nurse.body.immovable = true;
 
         player = this.add.sprite(0, 0, 'player');
         player.anchor.setTo(0.5, 0.5);
@@ -197,32 +204,41 @@ var Level1 = {
 
         platform2 = new platformY(0, this.game, 350, 500, 50)
 
+
+        //muelle 
         this.muelle = game.add.sprite(200,500, 'muelle');
         this.muelle.anchor.setTo(0.5, 0.5);
         this.physics.arcade.enable(this.muelle);
         this.muelle.body.immovable = true;
         this.muelle.body.allowGravity = true;
       
+      	
   },
-    move: function(platform, x, maxX){
-    	if(platform.x >= maxX)
-    		platform.body.velocity.x = -50;
-    	else if(platform.x <= x)
-    		platform.body.velocity.x = 50;
-    },
+  
     //IS called one per frame.
     update: function () {
         this.physics.arcade.collide(player, layer);
         this.physics.arcade.collide(this.muelle, layer);
-       // this.physics.arcade.collide(this.muelle, player);
+     	this.physics.arcade.collide(this.nurse, layer)
+        
+        this.enemy(this.nurse, 570, 620);
 
         if(this.physics.arcade.collide(this.muelle, player) 
         	&& player.body.y < this.muelle.body.y){
         	player.body.velocity.y = -800;
-        	console.log("arriba");
         }
 
-        this.physics.arcade.collide(player, enemy1.bird, this.spawn);
+        if(this.physics.arcade.collide(player, this.nurse) && !controls.attack.isDown){
+        	this.dead();
+        	
+        }
+        else if(checkOverlap(player, this.nurse) && controls.attack.isDown){
+        	this.nurse.destroy();
+        	console.log('muere');
+        }
+
+
+        //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
         this.physics.arcade.collide(player, platform1);
      
@@ -233,7 +249,7 @@ var Level1 = {
         player.body.velocity.x = 0;
         
         playerLevel = Math.log(playerXP, gameXPsteps);
-        console.log('Level: ' + Math.floor(playerLevel));
+        //console.log('Level: ' + Math.floor(playerLevel));
 
         this.movement();
          
@@ -249,13 +265,33 @@ var Level1 = {
         }
 
         
-        console.log("monedas: " + numCoins);
+        //console.log("monedas: " + numCoins);
 
         /*if(numCoins == 3){
             this.game.state.start('endLevel');
         }*/
     },
+
+    enemy: function(enemy, x, maxX){
+    	if(enemy.x >= maxX){
+    		enemy.body.velocity.x = -50;
+    		enemy.animations.play('walk');
+    		enemy.scale.setTo(-1, 1);
+    	}
+    	else if(enemy.x <= x){
+    		enemy.body.velocity.x = 50;
+    		enemy.animations.play('walk');
+    		enemy.scale.setTo(1, 1);
+    	}
+    	
+    },
     
+    move: function(platform, x, maxX){
+    	if(platform.x >= maxX)
+    		platform.body.velocity.x = -50;
+    	else if(platform.x <= x)
+    		platform.body.velocity.x = 50;
+    },
 
     movement: function(){
     	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 

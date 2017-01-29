@@ -51,6 +51,7 @@ var PreloaderScene = {
     //this.load.spritesheet('player', 'assets/player.png', 24, 26);
 
     this.load.spritesheet('player', 'assets/charlie_SpriteSheet.png', 24, 26);
+    this.load.spritesheet('nurse', 'assets/nurse.png', 30, 32);
 
     this.load.spritesheet('buttons', 'assets/buttons.png', 193, 71);
 
