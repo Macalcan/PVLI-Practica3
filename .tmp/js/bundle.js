@@ -113,8 +113,8 @@ var PreloaderScene = {
       //la imagen 'images/simples_pimples.png' con el nombre de la cache 'tiles' y
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
-    this.load.tilemap('map', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    this.load.image('tileset', 'assets/tileset.png');
+    this.load.tilemap('map', 'assets/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.image('tileset', 'assets/simples_pimples.png');
 
     //this.load.spritesheet('player', 'assets/player.png', 24, 26);
 
@@ -319,7 +319,7 @@ function EnemyBird (index, game, x, y) {
 
 };
 
-function platformX (index, game, x, y, maxX) {
+function platformX (game, x, y, maxX) {
     
     this.platform = game.add.sprite(x, y, 'platform');
     this.platform.anchor.setTo(0.5, 0.5);
@@ -329,12 +329,9 @@ function platformX (index, game, x, y, maxX) {
     this.platform.body.collideWorldBounds = true;
     this.platform.body.allowGravity = false;
 
-    this.platformTween = game.add.tween(this.platform, maxX).to({
-        x: this.platform.x + maxX
-    }, 2000, 'Linear', true, 0, 100, true);
-
-
-
+    this.x = x;
+    this.maxX = maxX;
+    
 };
 
 function platformY (index, game, x, y, maxY) {
@@ -354,6 +351,7 @@ function platformY (index, game, x, y, maxY) {
 
 
 };
+
 
 
 
@@ -394,7 +392,7 @@ var shooting;
 var attacking;
 var numCoins = 0;
 
-var platform1;
+//var platform1;
 var platform2;
 
 //Escena de juego.
@@ -410,11 +408,25 @@ var Level1 = {
 
         map = this.add.tilemap('map');
 
-        map.addTilesetImage('tileset', 'tileset');
-
-        layer = map.createLayer('Capa de Patrones 1');
+        map.addTilesetImage('patrones', 'tileset');
+        this.backgroundLayer = map.createLayer('BackgroundLayer');
+        this.groundLayer = map.createLayer('GroundLayer');
+        //plano de muerte
+        this.death = map.createLayer('Death');
+        this.death.visible = false;
+        map.setCollisionBetween(1, 5000, true, 'Death');
+        
+        this.groundLayer.setScale(1,1.7);
+        this.groundLayer.resizeWorld();
+        this.death.setScale(1,1.7);
+        this.death.resizeWorld();
+        
+        
+        console.log(this.groundLayer);
+        map.setCollisionBetween(1, 5000, true, 'GroundLayer');
+        //layer = map.createLayer('Capa de Patrones 1');
         //layer = map.createLayer('GroundLayer');
-        layer.resizeWorld();
+        //layer.resizeWorld();
 
         map.setCollisionBetween(0,3);
 
@@ -422,14 +434,15 @@ var Level1 = {
 
         //map.setTileIndexCallback(6, this.dead, this);
 
-        map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
+        //map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
         //this.musica = this.game.add.audio('musica');
         //this.muerte = this.game.add.audio('muerte');
         //this.salto = this.game.add.audio('salto');
         //this.musica.loopFull();
 
-        this.nurse = this.add.sprite(570, 300, 'nurse');
+        this.nurse = this.add.sprite(570, 440, 'nurse');
+        console.log(this.nurse.y); 
         this.nurse.anchor.setTo(0.5, 0.5);
         this.nurse.animations.add('walk', [0,1,2,3], 7, true);
         this.physics.arcade.enable(this.nurse);
@@ -451,6 +464,7 @@ var Level1 = {
         
         //engranaje
         this.engranajeD = this.add.sprite(620, 300, 'engranajeD');
+        this.engranajeD.scale.setTo(1.5,1.5);
         this.engranajeD.anchor.setTo(0.5, 0.5);
         this.engranajeD.animations.add('turn',  2, true);
         this.physics.arcade.enable(this.engranajeD);
@@ -515,16 +529,21 @@ var Level1 = {
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
 
         //platform1 = new platformX(0, this.game, 200, 500, 50);
-
-        platform1 = game.add.sprite(280, 500, 'platform');
+        this.platform1 = new platformX(this.game, 280, 500, 360);
+        /*platform1 = game.add.sprite(280, 500, 'platform');
     	platform1.anchor.setTo(0.5, 0.5);
      	this.physics.arcade.enable(platform1);
      	platform1.body.immovable = true;
     	platform1.body.collideWorldBounds = true;
-    	platform1.body.allowGravity = false;
+    	platform1.body.allowGravity = false;*/
 
         platform2 = new platformY(0, this.game, 350, 500, 50)
 
+        this.platformsX = [];
+        this.platformsX.push(this.platform1);
+        console.log(this.platformsX[0]);
+        console.log(this.platform1.x);
+        console.log(this.platform1.maxX);
 
         //muelle 
         this.muelle = game.add.sprite(200,500, 'muelle');
@@ -538,13 +557,15 @@ var Level1 = {
   
     //IS called one per frame.
     update: function () {
-        this.physics.arcade.collide(player, layer);
-        this.physics.arcade.collide(this.muelle, layer);
-     	this.physics.arcade.collide(this.nurse, layer)
-        this.physics.arcade.collide(this.door, layer);
+        this.physics.arcade.collide(player, this.groundLayer);
+        this.physics.arcade.collide(this.muelle, this.groundLayer);
+     	if(this.physics.arcade.collide(this.nurse, this.groundLayer))
+            console.log('chocado');
+        this.physics.arcade.collide(this.door, this.groundLayer);
         //this.engranajeD.animations.play('turn');
         
-        
+        if(this.physics.arcade.collide(player, this.death))
+            this.dead();
 
         if(this.engranajeD != null && this.physics.arcade.collide(player, this.engranajeD)){
             this.addEngrajes(this.engranajeD);
@@ -571,21 +592,27 @@ var Level1 = {
 
         if(this.engranajes == 1){
             if(this.physics.arcade.collide(this.door, player))
-                this.game.state.start('gameOver');
+                this.game.state.start('endLevel');
         }
         
 
         //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
 
-        this.physics.arcade.collide(player, platform1);
+      
+        for(var i = 0; i < this.platformsX.length; i++){
+
+            this.physics.arcade.collide(player, this.platformsX[i].platform);
+            this.move(this.platformsX[i].platform, this.platformsX[i].x, this.platformsX[i].maxX);
+           
+        }
      
-        this.move(platform1, 280, 360);
+        
         
         this.physics.arcade.collide(player, platform2.platform);
 
         player.body.velocity.x = 0;
         
-        playerLevel = Math.log(playerXP, gameXPsteps);
+        //playerLevel = Math.log(playerXP, gameXPsteps);
         //console.log('Level: ' + Math.floor(playerLevel));
 
         this.movement();
@@ -602,11 +629,14 @@ var Level1 = {
         }
 
         
-        //console.log("monedas: " + numCoins);
-
-        /*if(numCoins == 3){
-            this.game.state.start('endLevel');
-        }*/
+        
+    },
+     move: function(platform, x, maxX){
+        if(platform.x >= maxX)
+            platform.body.velocity.x = -50;
+        else if(platform.x <= x)
+            platform.body.velocity.x = 50;
+        
     },
 
     addEngrajes: function(engranaje){
@@ -629,13 +659,7 @@ var Level1 = {
     	
     },
     
-    move: function(platform, x, maxX){
-    	if(platform.x >= maxX)
-    		platform.body.velocity.x = -50;
-    	else if(platform.x <= x)
-    		platform.body.velocity.x = 50;
-    },
-
+    
     movement: function(){
     	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
             padXBOX.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {

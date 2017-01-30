@@ -45,8 +45,8 @@ var PreloaderScene = {
       //la imagen 'images/simples_pimples.png' con el nombre de la cache 'tiles' y
       // el atlasJSONHash con 'images/rush_spritesheet.png' como imagen y 'images/rush_spritesheet.json'
       //como descriptor de la animación.
-    this.load.tilemap('map', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    this.load.image('tileset', 'assets/tileset.png');
+    this.load.tilemap('map', 'assets/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.image('tileset', 'assets/simples_pimples.png');
 
     //this.load.spritesheet('player', 'assets/player.png', 24, 26);
 
