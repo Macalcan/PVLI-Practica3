@@ -114,14 +114,14 @@ var Level1 = {
         map.addTilesetImage('tileset', 'tileset');
 
         layer = map.createLayer('Capa de Patrones 1');
-
+        //layer = map.createLayer('GroundLayer');
         layer.resizeWorld();
 
         map.setCollisionBetween(0,3);
 
-        map.setTileIndexCallback(7, this.getCoin, this);
+        //map.setTileIndexCallback(7, this.getCoin, this);
 
-        map.setTileIndexCallback(6, this.dead, this);
+        //map.setTileIndexCallback(6, this.dead, this);
 
         map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
