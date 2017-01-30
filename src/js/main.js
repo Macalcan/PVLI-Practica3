@@ -82,6 +82,11 @@ var PreloaderScene = {
     this.game.load.audio('salto', "Musica/salto.wav");
     //Crear botones del menu de pausa.
 
+    //engranajes
+    this.game.load.spritesheet('engranajeD', 'assets/engranajeDorado.png', 15, 12);
+    //ascensor
+    this.game.load.spritesheet('ascensor', 'assets/ascensor.png', 30 , 32);
+    this.load.image('door', 'assets/platformerGraphics_buildings/Tiles/doorKnob.png');
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
       this.load.onLoadComplete.add(this.loadComplete, this);
   },

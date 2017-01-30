@@ -137,6 +137,28 @@ var Level1 = {
 		this.nurse.body.colliderWorldBounds = true;
 		this.nurse.body.immovable = true;
 
+        //ascensor
+        /*this.ascensor = this.add.sprite(750, 570, 'ascensor');
+        this.ascensor.anchor.setTo(0.5, 0.5);
+        //this.ascensor.animations.add('walk', [0,1], 7, true);
+        this.ascensor.arcade.enable(this.ascensor);
+        this.ascensor.body.colliderWorldBounds = true;
+        this.ascensor.body.immovable = true;*/
+        this.door = this.add.sprite(850, 500, 'door');
+        this.door.anchor.setTo(0.5, 0.5);
+        this.physics.arcade.enable(this.door);
+        this.door.body.colliderWorldBounds = true;
+        this.door.body.immovable = true;
+        
+        //engranaje
+        this.engranajeD = this.add.sprite(620, 300, 'engranajeD');
+        this.engranajeD.anchor.setTo(0.5, 0.5);
+        this.engranajeD.animations.add('turn',  2, true);
+        this.physics.arcade.enable(this.engranajeD);
+        this.engranajeD.body.colliderWorldBounds = true;
+        this.engranajeD.body.immovable = true;
+        this.engranajeD.body.allowGravity = false;
+
         player = this.add.sprite(0, 0, 'player');
         player.anchor.setTo(0.5, 0.5);
 
@@ -212,7 +234,7 @@ var Level1 = {
         this.muelle.body.immovable = true;
         this.muelle.body.allowGravity = true;
       
-      	
+      	this.engranajes = 0;
   },
   
     //IS called one per frame.
@@ -220,24 +242,38 @@ var Level1 = {
         this.physics.arcade.collide(player, layer);
         this.physics.arcade.collide(this.muelle, layer);
      	this.physics.arcade.collide(this.nurse, layer)
+        this.physics.arcade.collide(this.door, layer);
+        //this.engranajeD.animations.play('turn');
         
-        this.enemy(this.nurse, 570, 620);
+        
+
+        if(this.engranajeD != null && this.physics.arcade.collide(player, this.engranajeD)){
+            this.addEngrajes(this.engranajeD);
+        }
 
         if(this.physics.arcade.collide(this.muelle, player) 
         	&& player.body.y < this.muelle.body.y){
         	player.body.velocity.y = -800;
         }
 
-        if(this.physics.arcade.collide(player, this.nurse)
-             && player.body.y < this.nurse.body.y){
-        	this.nurse.destroy();
+        //si la enfermera está viva
+        if(this.nurse != null){
+            this.enemy(this.nurse, 570, 620);
+            if(this.physics.arcade.collide(player, this.nurse)
+                 && player.body.y < this.nurse.body.y){
+        	   this.nurse.destroy();
         	
-        }
-        else if(checkOverlap(player, this.nurse)){
+            }
+         else if(this.physics.arcade.collide(player, this.nurse)){
         	
-        	this.dead();
+        	   this.dead();
+         }
         }
 
+        if(this.engranajes == 1){
+            if(this.physics.arcade.collide(this.door, player))
+                this.game.state.start('gameOver');
+        }
         
 
         //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
@@ -272,6 +308,12 @@ var Level1 = {
         /*if(numCoins == 3){
             this.game.state.start('endLevel');
         }*/
+    },
+
+    addEngrajes: function(engranaje){
+         engranaje.destroy();
+         this.engranajes++;
+         console.log(this.engranajes);
     },
 
     enemy: function(enemy, x, maxX){
@@ -355,7 +397,7 @@ var Level1 = {
         map.putTile(-1, layer.getTileX(player.x), layer.getTileY(player.y));
 
         playerXP += 15;
-        numCoins++;
+        
        
     },
 
