@@ -53,7 +53,26 @@ function platformY (index, game, x, y, maxY) {
 
 };
 
+function muelle(game, x, y){
+    this.muelle = game.add.sprite(x, y, 'muelle');
+    this.muelle.anchor.setTo(0.5, 0.5);
+    game.physics.enable(this.muelle, Phaser.Physics.ARCADE);
+    this.muelle.body.immovable = true;
+    this.muelle.body.allowGravity = true;
+    this.y = y;
+};
 
+function engranaje(game, x, y){
+    this.engranaje = game.add.sprite(x, y, 'engranajeD');
+    this.engranaje.scale.setTo(1.5,1.5);
+    this.engranaje.anchor.setTo(0.5, 0.5);
+    this.engranaje.animations.add('turn',  [0,1,2,3,4], 2, true);
+    
+    game.physics.enable(this.engranaje, Phaser.Physics.ARCADE);
+    this.engranaje.body.colliderWorldBounds = true;
+    this.engranaje.body.immovable = true;
+    this.engranaje.body.allowGravity = false;
+};
 
 
 
@@ -145,7 +164,6 @@ var Level1 = {
         
 
         this.nurse = this.add.sprite(570, 440, 'nurse');
-        console.log(this.nurse.y); 
         this.nurse.anchor.setTo(0.5, 0.5);
         this.nurse.animations.add('walk', [0,1,2,3], 7, true);
         this.physics.arcade.enable(this.nurse);
@@ -166,14 +184,10 @@ var Level1 = {
         this.door.body.immovable = true;
         
         //engranaje
-        this.engranajeD = this.add.sprite(620, 300, 'engranajeD');
-        this.engranajeD.scale.setTo(1.5,1.5);
-        this.engranajeD.anchor.setTo(0.5, 0.5);
-        this.engranajeD.animations.add('turn',  [0,1,2,3,4], 2, true);
-        this.physics.arcade.enable(this.engranajeD);
-        this.engranajeD.body.colliderWorldBounds = true;
-        this.engranajeD.body.immovable = true;
-        this.engranajeD.body.allowGravity = false;
+        this.e1 = new engranaje(this.game, 620, 300);
+       
+        this.gears = [];
+        this.gears.push(this.e1);
 
         player = this.add.sprite(0, 0, 'player');
         player.anchor.setTo(0.5, 0.5);
@@ -227,32 +241,34 @@ var Level1 = {
         padXBOX = game.input.gamepad.pad1;
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
 
-        
+        //platforms
         this.platform1 = new platformX(this.game, 280, 500, 360);
-        
-
-        this.platform2 = new platformY(0, this.game, 350, 500, 50)
+        this.p3 = new platformX (this.game, 1120, 400, 1200);
 
         this.platformsX = [];
         this.platformsX.push(this.platform1);
-        console.log(this.platformsX[0]);
-        console.log(this.platform1.x);
-        console.log(this.platform1.maxX);
+        this.platformsX.push(this.p3);
+
+        this.platform2 = new platformY(0, this.game, 350, 500, 50)
+
+        
+       
 
         //muelle 
-        this.muelle = game.add.sprite(200,500, 'muelle');
-        this.muelle.anchor.setTo(0.5, 0.5);
-        this.physics.arcade.enable(this.muelle);
-        this.muelle.body.immovable = true;
-        this.muelle.body.allowGravity = true;
-      
+        this.muelle = new muelle (this.game, 900, 500);
+        this.m1 = new muelle(this.game, 1270, 300);
+
+        this.muelles = [];
+        this.muelles.push(this.muelle);
+        this.muelles.push(this.m1);
+
       	this.engranajes = 0;
   },
   
     //IS called one per frame.
     update: function () {
         this.physics.arcade.collide(player, this.groundLayer);
-        this.physics.arcade.collide(this.muelle, this.groundLayer);
+        
      	this.physics.arcade.collide(this.nurse, this.groundLayer);
         this.physics.arcade.collide(this.door, this.groundLayer);
         //this.engranajeD.animations.play('turn');
@@ -260,15 +276,20 @@ var Level1 = {
         if(this.physics.arcade.collide(player, this.death))
             this.dead();
 
-        if(this.engranajeD != null && this.physics.arcade.collide(player, this.engranajeD)){
-            this.coger.play();
-            this.addEngrajes(this.engranajeD);
+        for(var i = 0; i < this.gears.length; i++){
+            if(this.gears[i].engranaje != null && this.physics.arcade.collide(player, this.gears[i].engranaje)){
+                this.coger.play();
+                this.addEngrajes(this.gears[i].engranaje);
+            }
         }
 
-        if(this.physics.arcade.collide(this.muelle, player) 
-        	&& player.body.y < this.muelle.body.y){
-        	player.body.velocity.y = -800;
-            this.salto.play();
+        for(var i = 0; i < this.muelles.length; i++){
+            this.physics.arcade.collide(this.muelles[i].muelle, this.groundLayer);
+            if(this.physics.arcade.collide(this.muelles[i].muelle, player) 
+        	   && player.body.y < this.muelles[i].muelle.body.y){
+        	   player.body.velocity.y = -800;
+                this.salto.play();
+            }
         }
 
         //si la enfermera está viva
@@ -339,7 +360,6 @@ var Level1 = {
     addEngrajes: function(engranaje){
          engranaje.destroy();
          this.engranajes++;
-         console.log(this.engranajes);
     },
 
     enemy: function(enemy, x, maxX){
