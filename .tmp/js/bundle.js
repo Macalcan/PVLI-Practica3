@@ -660,6 +660,7 @@ var Level1 = {
             this.dead();
 
         for(var i = 0; i < this.gears.length; i++){
+            this.gears[i].engranaje.animations.play('turn');
             if(this.gears[i].engranaje != null && this.physics.arcade.collide(player, this.gears[i].engranaje)){
                 this.coger.play();
                 this.addEngrajes(this.gears[i].engranaje);
