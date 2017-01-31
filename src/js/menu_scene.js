@@ -31,7 +31,7 @@ var MenuScene = {
         this.game.state.start('Level1');
     },
     actionOnClickM : function(){
-        this.game.state.start('menu');
+        this.game.state.start('credits');
     }
 
 };

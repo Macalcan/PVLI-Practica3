@@ -5,6 +5,7 @@ var gameover_scene = require('./gameover_scene.js');
 var menu_scene = require('./menu_scene.js');
 var pause_menu = require('./pause_menu.js');
 var endLevel = require('./endLevel.js');
+var credits = require('./credits.js');
 // The Google WebFont Loader will look for this object, so create it before loading the script.
 
 
@@ -80,6 +81,7 @@ var PreloaderScene = {
     this.game.load.audio('muerte', "Musica/muerte.wav");
     this.game.load.audio('musica', "Musica/musica.mp3");
     this.game.load.audio('salto', "Musica/salto.wav");
+    this.game.load.audio('engranaje', 'Musica/engranaje.mp3');
     //Crear botones del menu de pausa.
 
     //engranajes
@@ -134,7 +136,8 @@ var wfconfig = {
 	game.state.add('gameOver', gameover_scene);
   game.state.add('pauseMenu', pause_menu);
   game.state.add('endLevel', endLevel);
-
+  game.state.add('credits', credits);
+  
 	game.state.start('boot');
 };
 window.onload = function (){

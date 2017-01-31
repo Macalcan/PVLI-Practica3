@@ -139,6 +139,7 @@ var Level1 = {
         this.musica = this.game.add.audio('musica');
         this.muerte = this.game.add.audio('muerte');
         this.salto = this.game.add.audio('salto');
+        this.coger = this.game.add.audio('engranaje');
         this.musica.loopFull();
         this.musica.volume -= 0.5;
         
@@ -260,6 +261,7 @@ var Level1 = {
             this.dead();
 
         if(this.engranajeD != null && this.physics.arcade.collide(player, this.engranajeD)){
+            this.coger.play();
             this.addEngrajes(this.engranajeD);
         }
 
@@ -426,24 +428,37 @@ var Level1 = {
     },
 
     pause: function(){
-        //Keep on playing
-        this.game.paused = true;
-        this.play = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 200, 'play');
-        this.play.anchor.set(0.5);
-        this.musica.mute = true;
-
-        this.play.inputEnabled = true;
-        this.game.input.onDown.add(this.onClick, this);
         
-   
-        //Main Menu
-        this.menu = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 300, 'mainmenu');
-        this.menu.anchor.set(0.5);
+        this.game.paused = true;
+        
+        //resume button
+         this.play = this.game.add.button(400, 300, 
+                                          'button', 
+                                          this.onClick, 
+                                          this, 2, 1, 0);
+        this.play.anchor.set(0.5);
+        var text = this.game.add.text(0, 0, "Play");
+        text.anchor.set(0.5);
+        this.play.addChild(text);
 
-        this.menu.inputEnabled = true;
+       //menu button
+        this.menu = this.game.add.button(400, 400, 
+                                          'button', 
+                                          this.onClick, 
+                                          this, 2, 1, 0);
+        this.menu.anchor.set(0.5);
+        var text2 = this.game.add.text(0, 0, "Menu");
+        text2.anchor.set(0.5);
+        this.menu.addChild(text2);
+
         this.game.input.onDown.add(this.onClick, this);
 
   
+    },
+
+    actionOnClick: function () {
+        this.unpause();
+        this.musica.mute = false;
     },
     onClick: function  (event){
       if(this.play.getBounds().contains(event.x,event.y)){

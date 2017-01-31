@@ -1,5 +1,39 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
+
+var credits = {
+	create: function(){
+		 this.stage.backgroundColor = '#3A5963';
+
+		var goText = this.game.add.text(400, 100, "Asylum Break by Macalcan");
+		goText.anchor.set(0.5);
+
+		var member1 = this.game.add.text(400, 200, "Blanca Macazaga");
+		member1.anchor.set(0.5);
+
+		var member2 = this.game.add.text(400, 300, "Adrián Alcántara");
+		member2.anchor.set(0.5);
+
+		var member3 = this.game.add.text(400, 400, "Pablo Gómez");
+		member3.anchor.set(0.5);
+
+		var buttonMenu = this.game.add.button(100, 50, 'button', this.actionOnClickM, this, 2, 1, 0);
+        buttonMenu.anchor.set(0.5);
+        var textMenu = this.game.add.text(0, 0, "Menu");
+        textMenu.anchor.set (0.5);
+        buttonMenu.addChild(textMenu);
+	},
+		
+
+    actionOnClickM : function(){
+        this.game.state.start('menu');
+    },
+    
+};
+
+module.exports = credits;
+},{}],2:[function(require,module,exports){
+
 var endLevel = {
 create: function () {
         
@@ -32,7 +66,7 @@ create: function () {
 };
 
 module.exports = endLevel;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var GameOver = {
     create: function () {
         console.log("Game Over");
@@ -65,7 +99,7 @@ var GameOver = {
 };
 
 module.exports = GameOver;
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var play_scene = require('./play_scene.js');
@@ -73,6 +107,7 @@ var gameover_scene = require('./gameover_scene.js');
 var menu_scene = require('./menu_scene.js');
 var pause_menu = require('./pause_menu.js');
 var endLevel = require('./endLevel.js');
+var credits = require('./credits.js');
 // The Google WebFont Loader will look for this object, so create it before loading the script.
 
 
@@ -148,6 +183,7 @@ var PreloaderScene = {
     this.game.load.audio('muerte', "Musica/muerte.wav");
     this.game.load.audio('musica', "Musica/musica.mp3");
     this.game.load.audio('salto', "Musica/salto.wav");
+    this.game.load.audio('engranaje', 'Musica/engranaje.mp3');
     //Crear botones del menu de pausa.
 
     //engranajes
@@ -202,14 +238,15 @@ var wfconfig = {
 	game.state.add('gameOver', gameover_scene);
   game.state.add('pauseMenu', pause_menu);
   game.state.add('endLevel', endLevel);
-
+  game.state.add('credits', credits);
+  
 	game.state.start('boot');
 };
 window.onload = function (){
   WebFont.load(wfconfig);
 };
 
-},{"./endLevel.js":1,"./gameover_scene.js":2,"./menu_scene.js":4,"./pause_menu.js":5,"./play_scene.js":6}],4:[function(require,module,exports){
+},{"./credits.js":1,"./endLevel.js":2,"./gameover_scene.js":3,"./menu_scene.js":5,"./pause_menu.js":6,"./play_scene.js":7}],5:[function(require,module,exports){
 var titlescreen;
 
 var MenuScene = {
@@ -243,13 +280,13 @@ var MenuScene = {
         this.game.state.start('Level1');
     },
     actionOnClickM : function(){
-        this.game.state.start('menu');
+        this.game.state.start('credits');
     }
 
 };
 
 module.exports = MenuScene;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
 var play;
 var menu;
@@ -297,7 +334,7 @@ var pauseMenu = {
 };
 
 module.exports = pauseMenu;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 // node ./node_modules/gulp/bin/gulp run
@@ -439,6 +476,7 @@ var Level1 = {
         this.musica = this.game.add.audio('musica');
         this.muerte = this.game.add.audio('muerte');
         this.salto = this.game.add.audio('salto');
+        this.coger = this.game.add.audio('engranaje');
         this.musica.loopFull();
         this.musica.volume -= 0.5;
         
@@ -560,6 +598,7 @@ var Level1 = {
             this.dead();
 
         if(this.engranajeD != null && this.physics.arcade.collide(player, this.engranajeD)){
+            this.coger.play();
             this.addEngrajes(this.engranajeD);
         }
 
@@ -726,24 +765,37 @@ var Level1 = {
     },
 
     pause: function(){
-        //Keep on playing
-        this.game.paused = true;
-        this.play = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 200, 'play');
-        this.play.anchor.set(0.5);
-        this.musica.mute = true;
-
-        this.play.inputEnabled = true;
-        this.game.input.onDown.add(this.onClick, this);
         
-   
-        //Main Menu
-        this.menu = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 300, 'mainmenu');
-        this.menu.anchor.set(0.5);
+        this.game.paused = true;
+        
+        //resume button
+         this.play = this.game.add.button(400, 300, 
+                                          'button', 
+                                          this.onClick, 
+                                          this, 2, 1, 0);
+        this.play.anchor.set(0.5);
+        var text = this.game.add.text(0, 0, "Play");
+        text.anchor.set(0.5);
+        this.play.addChild(text);
 
-        this.menu.inputEnabled = true;
+       //menu button
+        this.menu = this.game.add.button(400, 400, 
+                                          'button', 
+                                          this.onClick, 
+                                          this, 2, 1, 0);
+        this.menu.anchor.set(0.5);
+        var text2 = this.game.add.text(0, 0, "Menu");
+        text2.anchor.set(0.5);
+        this.menu.addChild(text2);
+
         this.game.input.onDown.add(this.onClick, this);
 
   
+    },
+
+    actionOnClick: function () {
+        this.unpause();
+        this.musica.mute = false;
     },
     onClick: function  (event){
       if(this.play.getBounds().contains(event.x,event.y)){
@@ -836,4 +888,4 @@ function checkOverlap (spriteA, spriteB) {
 
 module.exports = Level1;
 
-},{}]},{},[3]);
+},{}]},{},[4]);
