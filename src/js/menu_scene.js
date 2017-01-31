@@ -7,32 +7,33 @@ var MenuScene = {
 
     menuImage.scale.setTo(1.5,2);
 
-    this.createButton(this.game, 'start', this.game.world.centerX, this.game.world.centerY + 32, 300, 100,
-    function(){
-      this.state.start('Level1');
-    });
-
-    this.createButton(this.game,'about', this.game.world.centerX, this.game.world.centerY + 192, 300, 100,
-    function(){
-      console.log('About');
-    });
-
-    /*titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 190, 'titlescreen');
-    titlescreen.anchor.setTo(0.5, 0.5);*/
+ var button = this.game.add.button(400, 300, 
+                                          'button', 
+                                          this.actionOnClick, 
+                                          this, 2, 1, 0);
+        button.anchor.set(0.5);
+        var goText = this.game.add.text(400, 100, "Asylum Break");
+        var text = this.game.add.text(0, 0, "Start");
+        text.anchor.set(0.5);
+        goText.anchor.set(0.5);
+        button.addChild(text);
+        
+        //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
+        var buttonMenu = this.game.add.button(400, 400, 'button', this.actionOnClickM, this, 2, 1, 0);
+        buttonMenu.anchor.set(0.5);
+        var textMenu = this.game.add.text(0, 0, "Credits");
+        textMenu.anchor.set (0.5);
+        buttonMenu.addChild(textMenu);
     },
     
-    createButton: function(game, string, x, y, w, h, callback) {
-    var button1 = game.add.button(x, y, string, callback, this, 2, 1, 0);
+   
+    actionOnClick: function(){
+        this.game.state.start('Level1');
+    },
+    actionOnClickM : function(){
+        this.game.state.start('menu');
+    }
 
-    button1. anchor.setTo (0.5, 0.5);
-    button1.width = w;
-    button1.height = h;
-
-    var txt = game.add.text(button1.x, button1.y);
-
-    txt.anchor.setTo(0.5, 0.5);
-
-  },
 };
 
 module.exports = MenuScene;

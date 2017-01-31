@@ -219,32 +219,33 @@ var MenuScene = {
 
     menuImage.scale.setTo(1.5,2);
 
-    this.createButton(this.game, 'start', this.game.world.centerX, this.game.world.centerY + 32, 300, 100,
-    function(){
-      this.state.start('Level1');
-    });
-
-    this.createButton(this.game,'about', this.game.world.centerX, this.game.world.centerY + 192, 300, 100,
-    function(){
-      console.log('About');
-    });
-
-    /*titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 190, 'titlescreen');
-    titlescreen.anchor.setTo(0.5, 0.5);*/
+ var button = this.game.add.button(400, 300, 
+                                          'button', 
+                                          this.actionOnClick, 
+                                          this, 2, 1, 0);
+        button.anchor.set(0.5);
+        var goText = this.game.add.text(400, 100, "Asylum Break");
+        var text = this.game.add.text(0, 0, "Start");
+        text.anchor.set(0.5);
+        goText.anchor.set(0.5);
+        button.addChild(text);
+        
+        //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
+        var buttonMenu = this.game.add.button(400, 400, 'button', this.actionOnClickM, this, 2, 1, 0);
+        buttonMenu.anchor.set(0.5);
+        var textMenu = this.game.add.text(0, 0, "Credits");
+        textMenu.anchor.set (0.5);
+        buttonMenu.addChild(textMenu);
     },
     
-    createButton: function(game, string, x, y, w, h, callback) {
-    var button1 = game.add.button(x, y, string, callback, this, 2, 1, 0);
+   
+    actionOnClick: function(){
+        this.game.state.start('Level1');
+    },
+    actionOnClickM : function(){
+        this.game.state.start('menu');
+    }
 
-    button1. anchor.setTo (0.5, 0.5);
-    button1.width = w;
-    button1.height = h;
-
-    var txt = game.add.text(button1.x, button1.y);
-
-    txt.anchor.setTo(0.5, 0.5);
-
-  },
 };
 
 module.exports = MenuScene;
@@ -390,10 +391,9 @@ var buttonB;
 var jumping;
 var shooting;
 var attacking;
-var numCoins = 0;
 
-//var platform1;
-var platform2;
+
+
 
 //Escena de juego.
 var Level1 = {
@@ -436,10 +436,12 @@ var Level1 = {
 
         //map.createFromObjects('Capa de Objetos 1', 8, '', 0, true, false, respawn);
 
-        //this.musica = this.game.add.audio('musica');
-        //this.muerte = this.game.add.audio('muerte');
-        //this.salto = this.game.add.audio('salto');
-        //this.musica.loopFull();
+        this.musica = this.game.add.audio('musica');
+        this.muerte = this.game.add.audio('muerte');
+        this.salto = this.game.add.audio('salto');
+        this.musica.loopFull();
+        this.musica.volume -= 0.5;
+        
 
         this.nurse = this.add.sprite(570, 440, 'nurse');
         console.log(this.nurse.y); 
@@ -466,7 +468,7 @@ var Level1 = {
         this.engranajeD = this.add.sprite(620, 300, 'engranajeD');
         this.engranajeD.scale.setTo(1.5,1.5);
         this.engranajeD.anchor.setTo(0.5, 0.5);
-        this.engranajeD.animations.add('turn',  2, true);
+        this.engranajeD.animations.add('turn',  [0,1,2,3,4], 2, true);
         this.physics.arcade.enable(this.engranajeD);
         this.engranajeD.body.colliderWorldBounds = true;
         this.engranajeD.body.immovable = true;
@@ -478,7 +480,7 @@ var Level1 = {
         this.spawn();
 
         player.animations.add('idle', [0,1], 2, true);
-        player.animations.add('jump', [10, 11, 12], 1, true);
+        player.animations.add('jump', [0], 1, true);
         player.animations.add('run', [2, 3, 4, 5], 7, true);
         player.animations.add('attack', [6, 7, 8, 9], 7, true);
 
@@ -496,11 +498,7 @@ var Level1 = {
             pause: this.input.keyboard.addKey(Phaser.Keyboard.ESC),
         };
 
-        /*button = this.add.button(this.world.centerX - 95, this.world.centerY + 200, 'buttons', function(){
-            console.log('pressed');
-        }, this, 2, 1, 0);
-
-        button.fixedToCamera = true;*/
+      
 
         drag = this.add.sprite(player.x, player.y, 'drag');
         drag.anchor.setTo(0.5, 0.5);
@@ -528,16 +526,11 @@ var Level1 = {
         padXBOX = game.input.gamepad.pad1;
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
 
-        //platform1 = new platformX(0, this.game, 200, 500, 50);
+        
         this.platform1 = new platformX(this.game, 280, 500, 360);
-        /*platform1 = game.add.sprite(280, 500, 'platform');
-    	platform1.anchor.setTo(0.5, 0.5);
-     	this.physics.arcade.enable(platform1);
-     	platform1.body.immovable = true;
-    	platform1.body.collideWorldBounds = true;
-    	platform1.body.allowGravity = false;*/
+        
 
-        platform2 = new platformY(0, this.game, 350, 500, 50)
+        this.platform2 = new platformY(0, this.game, 350, 500, 50)
 
         this.platformsX = [];
         this.platformsX.push(this.platform1);
@@ -559,8 +552,7 @@ var Level1 = {
     update: function () {
         this.physics.arcade.collide(player, this.groundLayer);
         this.physics.arcade.collide(this.muelle, this.groundLayer);
-     	if(this.physics.arcade.collide(this.nurse, this.groundLayer))
-            console.log('chocado');
+     	this.physics.arcade.collide(this.nurse, this.groundLayer);
         this.physics.arcade.collide(this.door, this.groundLayer);
         //this.engranajeD.animations.play('turn');
         
@@ -574,6 +566,7 @@ var Level1 = {
         if(this.physics.arcade.collide(this.muelle, player) 
         	&& player.body.y < this.muelle.body.y){
         	player.body.velocity.y = -800;
+            this.salto.play();
         }
 
         //si la enfermera está viva
@@ -591,8 +584,10 @@ var Level1 = {
         }
 
         if(this.engranajes == 1){
-            if(this.physics.arcade.collide(this.door, player))
+            if(this.physics.arcade.collide(this.door, player)){
+                this.musica.destroy();
                 this.game.state.start('endLevel');
+            }
         }
         
 
@@ -608,7 +603,7 @@ var Level1 = {
      
         
         
-        this.physics.arcade.collide(player, platform2.platform);
+        this.physics.arcade.collide(player, this.platform2.platform);
 
         player.body.velocity.x = 0;
         
@@ -682,7 +677,7 @@ var Level1 = {
             player.body.velocity.y = -800;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
-            //this.salto.play();
+            this.salto.play();
         }
 
         if (player.body.velocity.x == 0 && player.body.velocity.y == 0) {
@@ -702,7 +697,7 @@ var Level1 = {
     },
     
     dead: function(){
-        this.destruir;
+        this.musica.destroy();
         this.game.state.start('gameOver');
     },
     spawn: function() {
@@ -724,7 +719,7 @@ var Level1 = {
        
     },
 
-        pausa: function(){
+    pausa: function(){
         //this.game.state.start('pauseMenu');
         this.pause(this.game);
         
@@ -735,6 +730,7 @@ var Level1 = {
         this.game.paused = true;
         this.play = this.game.add.button(this.game.camera.x + 400, this.game.camera.y + 200, 'play');
         this.play.anchor.set(0.5);
+        this.musica.mute = true;
 
         this.play.inputEnabled = true;
         this.game.input.onDown.add(this.onClick, this);
@@ -752,10 +748,11 @@ var Level1 = {
     onClick: function  (event){
       if(this.play.getBounds().contains(event.x,event.y)){
           this.unpause();
+          this.musica.mute = false;
       }
       else if(this.menu.getBounds().contains(event.x,event.y)){
           this.game.paused = false;
-          this.destruir;
+          this.musica.destroy();
           this.game.state.start('menu');
       }
   },
@@ -766,8 +763,8 @@ var Level1 = {
     },
 
     destroyButtons: function(){
-        this.play.kill();
-        this.menu.kill();
+        this.play.destroy();
+        this.menu.destroy();
     },
     
     shootNut: function() {
@@ -819,10 +816,10 @@ var Level1 = {
 
     destruir: function () {
 
-        this.map.destroy();
-        this.layer.destroy();
-        this.player.destroy();
-        this.enemy1.destroy();
+        map.destroy();
+        this.groundLayer.destroy();
+        this.musica.mute = true;
+        this.musica.destroy();
     },
 
     
