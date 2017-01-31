@@ -411,7 +411,17 @@ function engranaje(game, x, y){
     this.engranaje.body.allowGravity = false;
 };
 
+function nurse (game, x, y, maxX){
+    this.nurse = game.add.sprite(x, y, 'nurse');
+    this.nurse.anchor.setTo(0.5, 0.5);
+    this.nurse.animations.add('walk', [0,1,2,3], 7, true);
+    game.physics.enable(this.nurse, Phaser.Physics.ARCADE);
+    this.nurse.body.colliderWorldBounds = true;
+    this.nurse.body.immovable = true;
 
+    this.x = x;
+    this.maxX = maxX;
+};
 
 var enemy1;
 
@@ -499,13 +509,13 @@ var Level1 = {
         this.musica.loopFull();
         this.musica.volume -= 0.5;
         
+        //nurses
+        this.nurses = [];
 
-        this.nurse = this.add.sprite(570, 440, 'nurse');
-        this.nurse.anchor.setTo(0.5, 0.5);
-        this.nurse.animations.add('walk', [0,1,2,3], 7, true);
-        this.physics.arcade.enable(this.nurse);
-		this.nurse.body.colliderWorldBounds = true;
-		this.nurse.body.immovable = true;
+        this.n1 = new nurse(this.game, 570, 440, 600);
+        this.nurses.push(this.n1);
+        
+        
 
         //ascensor
         /*this.ascensor = this.add.sprite(750, 570, 'ascensor');
@@ -521,10 +531,12 @@ var Level1 = {
         this.door.body.immovable = true;
         
         //engranaje
-        this.e1 = new engranaje(this.game, 620, 300);
-       
         this.gears = [];
+
+        this.e1 = new engranaje(this.game, 620, 300);
         this.gears.push(this.e1);
+        
+        
 
         player = this.add.sprite(0, 0, 'player');
         player.anchor.setTo(0.5, 0.5);
@@ -579,12 +591,15 @@ var Level1 = {
         padXBOX.addCallbacks(this, {onConnect: this.addButons});
 
         //platforms
-        this.platform1 = new platformX(this.game, 280, 500, 360);
-        this.p3 = new platformX (this.game, 1120, 400, 1200);
-
         this.platformsX = [];
+
+        this.platform1 = new platformX(this.game, 280, 500, 360);
         this.platformsX.push(this.platform1);
+        this.p3 = new platformX (this.game, 1120, 400, 1200);
         this.platformsX.push(this.p3);
+        
+        
+        
 
         this.platform2 = new platformY(0, this.game, 350, 500, 50)
 
@@ -592,12 +607,15 @@ var Level1 = {
        
 
         //muelle 
-        this.muelle = new muelle (this.game, 900, 500);
-        this.m1 = new muelle(this.game, 1270, 300);
-
         this.muelles = [];
+
+        this.muelle = new muelle (this.game, 900, 500);
         this.muelles.push(this.muelle);
+        this.m1 = new muelle(this.game, 1270, 300);
         this.muelles.push(this.m1);
+        
+        
+        
 
       	this.engranajes = 0;
   },
@@ -606,7 +624,7 @@ var Level1 = {
     update: function () {
         this.physics.arcade.collide(player, this.groundLayer);
         
-     	this.physics.arcade.collide(this.nurse, this.groundLayer);
+     	
         this.physics.arcade.collide(this.door, this.groundLayer);
         //this.engranajeD.animations.play('turn');
         
@@ -630,18 +648,21 @@ var Level1 = {
         }
 
         //si la enfermera está viva
-        if(this.nurse != null){
-            this.enemy(this.nurse, 570, 620);
-            if(this.physics.arcade.collide(player, this.nurse)
-                 && player.body.y < this.nurse.body.y){
-        	   this.nurse.destroy();
+        for(var i = 0; i < this.nurses.length; i++){
+            if(this.nurses[i].nurse != null){
+                this.physics.arcade.collide(this.nurses[i].nurse, this.groundLayer);
+                this.enemy(this.nurses[i].nurse, this.nurses[i].x, this.nurses[i].maxX);
+                if(this.physics.arcade.collide(player, this.nurses[i].nurse)
+                     && player.body.y < this.nurses[i].nurse.body.y){
+        	       this.nurses[i].nurse.destroy();
         	
+                 }
+                else if(this.physics.arcade.collide(player, this.nurses[i].nurse)){
+        	
+        	        this.dead();
+                }
             }
-         else if(this.physics.arcade.collide(player, this.nurse)){
-        	
-        	   this.dead();
-         }
-        }
+            }
 
         if(this.engranajes == 1){
             if(this.physics.arcade.collide(this.door, player)){
