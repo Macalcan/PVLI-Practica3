@@ -2,23 +2,7 @@
 
 // node ./node_modules/gulp/bin/gulp run
 
-function EnemyBird (index, game, x, y) {
-    
-    this.bird = game.add.sprite(x, y, 'bird');
-    this.bird.anchor.setTo(0.5, 0.5);
-    this.bird.name = index.toString();
-    game.physics.enable(this.bird, Phaser.Physics.ARCADE);
-    this.bird.body.immovable = true;
-    this.bird.body.collideWorldBounds = true;
-    this.bird.body.allowGravity = false;
 
-    this.birdTween = game.add.tween(this.bird).to({
-        x: this.bird.x + 100
-    }, 2000, 'Linear', true, 0, 100, true);
-
-
-
-};
 
 function platformX (game, x, y, maxX) {
     
@@ -120,8 +104,9 @@ var buttonB;
 var jumping;
 var shooting;
 var attacking;
+var nut;
 
-
+var time = 2;
 
 
 //Escena de juego.
@@ -142,7 +127,7 @@ var Level1 = {
         this.groundLayer = map.createLayer('GroundLayer');
         //plano de muerte
         this.death = map.createLayer('Death');
-        this.death.visible = true;
+        this.death.visible = false;
         map.setCollisionBetween(1, 5000, true, 'Death');
         
         this.groundLayer.setScale(1,1.7);
@@ -150,6 +135,7 @@ var Level1 = {
         this.death.setScale(1,1.7);
         this.death.resizeWorld();
         
+        this.text = this.game.add.text(100, 400, "Jump and shoot nurses to defend yourself");
         
         console.log(this.groundLayer);
         map.setCollisionBetween(1, 5000, true, 'GroundLayer');
@@ -187,13 +173,8 @@ var Level1 = {
         this.nurses.push(this.n5);
         
 
-        //ascensor
-        /*this.ascensor = this.add.sprite(750, 570, 'ascensor');
-        this.ascensor.anchor.setTo(0.5, 0.5);
-        //this.ascensor.animations.add('walk', [0,1], 7, true);
-        this.ascensor.arcade.enable(this.ascensor);
-        this.ascensor.body.colliderWorldBounds = true;
-        this.ascensor.body.immovable = true;*/
+      
+
         this.door = this.add.sprite(3100, 500, 'door');
         this.door.anchor.setTo(0.5, 0.5);
         this.physics.arcade.enable(this.door);
@@ -216,14 +197,16 @@ var Level1 = {
         
         
 
-        player = this.add.sprite(0, 0, 'player');
+        player = this.add.sprite(50, 50, 'player');
         player.anchor.setTo(0.5, 0.5);
 
-        this.spawn();
+       // this.spawn();
 
         player.animations.add('idle', [0,1], 2, true);
+       
         player.animations.add('jump', [0], 1, true);
         player.animations.add('run', [2, 3, 4, 5], 7, true);
+      
         player.animations.add('attack', [6, 7, 8, 9], 7, true);
 
 
@@ -256,13 +239,15 @@ var Level1 = {
         nuts = this.game.add.group();
         nuts.enableBody = true;
         nuts.physicsBodyType = Phaser.Physics.ARCADE;
-        nuts.createMultiple(5, 'nut');
+        nuts.createMultiple(5, 'dentadura');
+       
         nuts.setAll('anchor.x', 0.5);
         nuts.setAll('anchor.y', 0.5);
-        nuts.setAll('scale.x', 0.5);
-        nuts.setAll('scale.y', 0.5);
+        nuts.setAll('scale.x', 1.5);
+        nuts.setAll('scale.y', 1.5);
         nuts.setAll('outOfBoundsKill', true);
         nuts.setAll('checkWorldBounds', true);
+        nuts.setAll('body.allowGravity', true);
 
 
         game.input.gamepad.start();
@@ -304,6 +289,7 @@ var Level1 = {
         
 
       	this.engranajes = 0;
+
   },
   
     //IS called one per frame.
@@ -343,8 +329,13 @@ var Level1 = {
         for(var i = 0; i < this.nurses.length; i++){
             if(this.nurses[i].nurse != null){
                 this.physics.arcade.collide(this.nurses[i].nurse, this.groundLayer);
-
                 this.enemy(this.nurses[i].nurse, this.nurses[i].x, this.nurses[i].maxX);
+                if(this.physics.arcade.collide(this.nurses[i].nurse, nuts)){
+                    this.nurses[i].nurse.destroy();
+                    nut.destroy();
+
+                }
+                
                 
                 if(this.physics.arcade.collide(player, this.nurses[i].nurse)){
         	        if(player.body.y >= this.nurses[i].nurse.body.y){
@@ -358,6 +349,8 @@ var Level1 = {
         	
                  }
 
+
+
             }
         }
 
@@ -367,6 +360,7 @@ var Level1 = {
                 this.game.state.start('endLevel');
             }
         }
+       
         
 
         //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
@@ -381,20 +375,15 @@ var Level1 = {
      
         
         
-        
 
         player.body.velocity.x = 0;
         
-        //playerLevel = Math.log(playerXP, gameXPsteps);
-        //console.log('Level: ' + Math.floor(playerLevel));
+        
 
         this.movement();
          
 
-        /*if (checkOverlap(nuts, enemy1.bird)) {
-            enemy1.bird.kill();
-            this.muerte.play();
-        }*/
+        
 
         if(controls.pause.isDown){
             this.pausa();
@@ -442,7 +431,7 @@ var Level1 = {
     movement: function(){
     	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
             padXBOX.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {
-            if (player.body.onFloor() ||player.body.touching.down)
+            if (player.body.onFloor() || player.body.touching.down)
                 player.animations.play('run');
             player.scale.setTo(1, 1);
             player.body.velocity.x += playerSpeed;
@@ -458,7 +447,7 @@ var Level1 = {
 
         if ((controls.up.isDown || jumping) && (player.body.onFloor() ||
             player.body.touching.down) && this.time.now > jumpTimer) {
-            player.body.velocity.y = -800;
+            player.body.velocity.y = -400;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
             this.salto.play();
@@ -484,25 +473,7 @@ var Level1 = {
         this.musica.destroy();
         this.game.state.start('gameOver');
     },
-    spawn: function() {
-
-        respawn.forEach(function(spawnPoint){
-
-            player.reset(spawnPoint.x, spawnPoint.y);
-            this.restaVida;
-
-        }, this);
-    },
-
-    getCoin: function() {
-
-        map.putTile(-1, layer.getTileX(player.x), layer.getTileY(player.y));
-
-        playerXP += 15;
-        
-       
-    },
-
+  
     pausa: function(){
         //this.game.state.start('pauseMenu');
         this.pause(this.game);
@@ -566,15 +537,14 @@ var Level1 = {
     
     shootNut: function() {
         if(this.time.now > shootTime) {
-            var nut = nuts.getFirstExists(false);
+            nut = nuts.getFirstExists(false);
             if(nut) {
                 nut.reset(player.x, player.y);
-
-                nut.body.velocity.y = -600;
+                nut.body.velocity.x = 800;
+                
 
                 shootTime = this.time.now + 900;
 
-                playerXP += 15;
             }
         }
     },

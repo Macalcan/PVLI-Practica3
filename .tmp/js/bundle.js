@@ -1,39 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
-
-var credits = {
-	create: function(){
-		 this.stage.backgroundColor = '#3A5963';
-
-		var goText = this.game.add.text(400, 100, "Asylum Break by Macalcan");
-		goText.anchor.set(0.5);
-
-		var member1 = this.game.add.text(400, 200, "Blanca Macazaga");
-		member1.anchor.set(0.5);
-
-		var member2 = this.game.add.text(400, 300, "Adrián Alcántara");
-		member2.anchor.set(0.5);
-
-		var member3 = this.game.add.text(400, 400, "Pablo Gómez");
-		member3.anchor.set(0.5);
-
-		var buttonMenu = this.game.add.button(100, 50, 'button', this.actionOnClickM, this, 2, 1, 0);
-        buttonMenu.anchor.set(0.5);
-        var textMenu = this.game.add.text(0, 0, "Menu");
-        textMenu.anchor.set (0.5);
-        buttonMenu.addChild(textMenu);
-	},
-		
-
-    actionOnClickM : function(){
-        this.game.state.start('menu');
-    },
-    
-};
-
-module.exports = credits;
-},{}],2:[function(require,module,exports){
-
 var endLevel = {
 create: function () {
         
@@ -66,7 +32,7 @@ create: function () {
 };
 
 module.exports = endLevel;
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var GameOver = {
     create: function () {
         console.log("Game Over");
@@ -99,6 +65,40 @@ var GameOver = {
 };
 
 module.exports = GameOver;
+},{}],3:[function(require,module,exports){
+
+
+var levels = {
+	create: function(){
+		 this.stage.backgroundColor = '#3A5963';
+
+	
+
+		var button = this.game.add.button(400, 100, 'button', this.onClick, this, 2, 1, 0);
+        button.anchor.set(0.5);
+        var text = this.game.add.text(0, 0, "Level1");
+        text.anchor.set (0.5);
+        button.addChild(text);
+
+		var buttonMenu = this.game.add.button(100, 50, 'button', this.actionOnClickM, this, 2, 1, 0);
+        buttonMenu.anchor.set(0.5);
+        var textMenu = this.game.add.text(0, 0, "Menu");
+        textMenu.anchor.set (0.5);
+        buttonMenu.addChild(textMenu);
+	},
+		
+
+    actionOnClickM : function(){
+        this.game.state.start('menu');
+    },
+
+    onClick: function(){
+    	 this.game.state.start('Level1');
+    }
+    
+};
+
+module.exports = levels;
 },{}],4:[function(require,module,exports){
 'use strict';
 
@@ -107,7 +107,7 @@ var gameover_scene = require('./gameover_scene.js');
 var menu_scene = require('./menu_scene.js');
 var pause_menu = require('./pause_menu.js');
 var endLevel = require('./endLevel.js');
-var credits = require('./credits.js');
+var levels = require('./levels.js');
 // The Google WebFont Loader will look for this object, so create it before loading the script.
 
 
@@ -166,7 +166,7 @@ var PreloaderScene = {
 
     this.load.image('nut', 'assets/nut.png');
 
-    this.load.image('titlescreen', 'assets/titlescreen.png');
+    this.load.spritesheet('dentadura', 'assets/dentadura.png', 13.3, 15);
 
     this.load.image('menuBackground', 'assets/menuBackground.jpg');
 
@@ -189,7 +189,7 @@ var PreloaderScene = {
     //engranajes
     this.game.load.spritesheet('engranajeD', 'assets/engranajeDorado.png', 15, 12);
     //ascensor
-    this.game.load.spritesheet('ascensor', 'assets/ascensor.png', 30 , 32);
+    this.game.load.spritesheet('ascensor', 'assets/ascensor.png', 145 , 140);
     this.load.image('door', 'assets/platformerGraphics_buildings/Tiles/doorKnob.png');
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
       this.load.onLoadComplete.add(this.loadComplete, this);
@@ -238,7 +238,7 @@ var wfconfig = {
 	game.state.add('gameOver', gameover_scene);
   game.state.add('pauseMenu', pause_menu);
   game.state.add('endLevel', endLevel);
-  game.state.add('credits', credits);
+  game.state.add('levels', levels);
   
 	game.state.start('boot');
 };
@@ -246,7 +246,7 @@ window.onload = function (){
   WebFont.load(wfconfig);
 };
 
-},{"./credits.js":1,"./endLevel.js":2,"./gameover_scene.js":3,"./menu_scene.js":5,"./pause_menu.js":6,"./play_scene.js":7}],5:[function(require,module,exports){
+},{"./endLevel.js":1,"./gameover_scene.js":2,"./levels.js":3,"./menu_scene.js":5,"./pause_menu.js":6,"./play_scene.js":7}],5:[function(require,module,exports){
 var titlescreen;
 
 var MenuScene = {
@@ -270,7 +270,7 @@ var MenuScene = {
         //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
         var buttonMenu = this.game.add.button(400, 400, 'button', this.actionOnClickM, this, 2, 1, 0);
         buttonMenu.anchor.set(0.5);
-        var textMenu = this.game.add.text(0, 0, "Credits");
+        var textMenu = this.game.add.text(0, 0, "Levels");
         textMenu.anchor.set (0.5);
         buttonMenu.addChild(textMenu);
     },
@@ -280,7 +280,7 @@ var MenuScene = {
         this.game.state.start('Level1');
     },
     actionOnClickM : function(){
-        this.game.state.start('credits');
+        this.game.state.start('levels');
     }
 
 };
@@ -457,8 +457,9 @@ var buttonB;
 var jumping;
 var shooting;
 var attacking;
+var nut;
 
-
+var time = 2;
 
 
 //Escena de juego.
@@ -479,7 +480,7 @@ var Level1 = {
         this.groundLayer = map.createLayer('GroundLayer');
         //plano de muerte
         this.death = map.createLayer('Death');
-        this.death.visible = true;
+        this.death.visible = false;
         map.setCollisionBetween(1, 5000, true, 'Death');
         
         this.groundLayer.setScale(1,1.7);
@@ -487,6 +488,7 @@ var Level1 = {
         this.death.setScale(1,1.7);
         this.death.resizeWorld();
         
+        this.text = this.game.add.text(100, 400, "Jump and shoot nurses to defend yourself");
         
         console.log(this.groundLayer);
         map.setCollisionBetween(1, 5000, true, 'GroundLayer');
@@ -525,12 +527,14 @@ var Level1 = {
         
 
         //ascensor
-        /*this.ascensor = this.add.sprite(750, 570, 'ascensor');
+        /*this.ascensor = this.add.sprite(3100, 500, 'ascensor');
         this.ascensor.anchor.setTo(0.5, 0.5);
-        //this.ascensor.animations.add('walk', [0,1], 7, true);
-        this.ascensor.arcade.enable(this.ascensor);
+        this.ascensor.animations.add('close', [0], 1, true);
+        this.ascensor.animations.add('open', [1], 1, true);
+        this.physics.arcade.enable(this.ascensor);
         this.ascensor.body.colliderWorldBounds = true;
         this.ascensor.body.immovable = true;*/
+
         this.door = this.add.sprite(3100, 500, 'door');
         this.door.anchor.setTo(0.5, 0.5);
         this.physics.arcade.enable(this.door);
@@ -553,14 +557,16 @@ var Level1 = {
         
         
 
-        player = this.add.sprite(0, 0, 'player');
+        player = this.add.sprite(50, 50, 'player');
         player.anchor.setTo(0.5, 0.5);
 
-        this.spawn();
+       // this.spawn();
 
         player.animations.add('idle', [0,1], 2, true);
+       
         player.animations.add('jump', [0], 1, true);
         player.animations.add('run', [2, 3, 4, 5], 7, true);
+      
         player.animations.add('attack', [6, 7, 8, 9], 7, true);
 
 
@@ -593,13 +599,15 @@ var Level1 = {
         nuts = this.game.add.group();
         nuts.enableBody = true;
         nuts.physicsBodyType = Phaser.Physics.ARCADE;
-        nuts.createMultiple(5, 'nut');
+        nuts.createMultiple(5, 'dentadura');
+       
         nuts.setAll('anchor.x', 0.5);
         nuts.setAll('anchor.y', 0.5);
-        nuts.setAll('scale.x', 0.5);
-        nuts.setAll('scale.y', 0.5);
+        nuts.setAll('scale.x', 1.5);
+        nuts.setAll('scale.y', 1.5);
         nuts.setAll('outOfBoundsKill', true);
         nuts.setAll('checkWorldBounds', true);
+        nuts.setAll('body.allowGravity', true);
 
 
         game.input.gamepad.start();
@@ -641,6 +649,7 @@ var Level1 = {
         
 
       	this.engranajes = 0;
+        
   },
   
     //IS called one per frame.
@@ -680,8 +689,13 @@ var Level1 = {
         for(var i = 0; i < this.nurses.length; i++){
             if(this.nurses[i].nurse != null){
                 this.physics.arcade.collide(this.nurses[i].nurse, this.groundLayer);
-
                 this.enemy(this.nurses[i].nurse, this.nurses[i].x, this.nurses[i].maxX);
+                if(this.physics.arcade.collide(this.nurses[i].nurse, nuts)){
+                    this.nurses[i].nurse.destroy();
+                    nut.destroy();
+
+                }
+                
                 
                 if(this.physics.arcade.collide(player, this.nurses[i].nurse)){
         	        if(player.body.y >= this.nurses[i].nurse.body.y){
@@ -695,6 +709,8 @@ var Level1 = {
         	
                  }
 
+
+
             }
         }
 
@@ -704,6 +720,7 @@ var Level1 = {
                 this.game.state.start('endLevel');
             }
         }
+       
         
 
         //this.physics.arcade.collide(player, enemy1.bird, this.spawn);
@@ -716,7 +733,9 @@ var Level1 = {
            
         }
      
-        
+        if(nut != null){
+
+        }
         
         
 
@@ -779,7 +798,7 @@ var Level1 = {
     movement: function(){
     	if (controls.right.isDown || (padXBOX.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || 
             padXBOX.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1)) {
-            if (player.body.onFloor() ||player.body.touching.down)
+            if (player.body.onFloor() || player.body.touching.down)
                 player.animations.play('run');
             player.scale.setTo(1, 1);
             player.body.velocity.x += playerSpeed;
@@ -795,7 +814,7 @@ var Level1 = {
 
         if ((controls.up.isDown || jumping) && (player.body.onFloor() ||
             player.body.touching.down) && this.time.now > jumpTimer) {
-            player.body.velocity.y = -800;
+            player.body.velocity.y = -400;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
             this.salto.play();
@@ -821,7 +840,7 @@ var Level1 = {
         this.musica.destroy();
         this.game.state.start('gameOver');
     },
-    spawn: function() {
+    /*spawn: function() {
 
         respawn.forEach(function(spawnPoint){
 
@@ -829,7 +848,7 @@ var Level1 = {
             this.restaVida;
 
         }, this);
-    },
+    },*/
 
     getCoin: function() {
 
@@ -903,15 +922,14 @@ var Level1 = {
     
     shootNut: function() {
         if(this.time.now > shootTime) {
-            var nut = nuts.getFirstExists(false);
+            nut = nuts.getFirstExists(false);
             if(nut) {
                 nut.reset(player.x, player.y);
-
-                nut.body.velocity.y = -600;
+                nut.body.velocity.x = 800;
+                
 
                 shootTime = this.time.now + 900;
 
-                playerXP += 15;
             }
         }
     },

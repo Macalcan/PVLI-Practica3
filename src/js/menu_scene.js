@@ -21,7 +21,7 @@ var MenuScene = {
         //TODO 8 crear un boton con el texto 'Return Main Menu' que nos devuelva al menu del juego.
         var buttonMenu = this.game.add.button(400, 400, 'button', this.actionOnClickM, this, 2, 1, 0);
         buttonMenu.anchor.set(0.5);
-        var textMenu = this.game.add.text(0, 0, "Credits");
+        var textMenu = this.game.add.text(0, 0, "Levels");
         textMenu.anchor.set (0.5);
         buttonMenu.addChild(textMenu);
     },
@@ -31,7 +31,7 @@ var MenuScene = {
         this.game.state.start('Level1');
     },
     actionOnClickM : function(){
-        this.game.state.start('credits');
+        this.game.state.start('levels');
     }
 
 };

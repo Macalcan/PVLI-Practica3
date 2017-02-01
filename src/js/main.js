@@ -5,7 +5,7 @@ var gameover_scene = require('./gameover_scene.js');
 var menu_scene = require('./menu_scene.js');
 var pause_menu = require('./pause_menu.js');
 var endLevel = require('./endLevel.js');
-var credits = require('./credits.js');
+var levels = require('./levels.js');
 // The Google WebFont Loader will look for this object, so create it before loading the script.
 
 
@@ -64,7 +64,7 @@ var PreloaderScene = {
 
     this.load.image('nut', 'assets/nut.png');
 
-    this.load.image('titlescreen', 'assets/titlescreen.png');
+    this.load.spritesheet('dentadura', 'assets/dentadura.png', 13.3, 15);
 
     this.load.image('menuBackground', 'assets/menuBackground.jpg');
 
@@ -87,7 +87,7 @@ var PreloaderScene = {
     //engranajes
     this.game.load.spritesheet('engranajeD', 'assets/engranajeDorado.png', 15, 12);
     //ascensor
-    this.game.load.spritesheet('ascensor', 'assets/ascensor.png', 30 , 32);
+    this.game.load.spritesheet('ascensor', 'assets/ascensor.png', 145 , 140);
     this.load.image('door', 'assets/platformerGraphics_buildings/Tiles/doorKnob.png');
       //TODO 2.2a Escuchar el evento onLoadComplete con el método loadComplete que el state 'play'
       this.load.onLoadComplete.add(this.loadComplete, this);
@@ -136,7 +136,7 @@ var wfconfig = {
 	game.state.add('gameOver', gameover_scene);
   game.state.add('pauseMenu', pause_menu);
   game.state.add('endLevel', endLevel);
-  game.state.add('credits', credits);
+  game.state.add('levels', levels);
   
 	game.state.start('boot');
 };
