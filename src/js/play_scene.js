@@ -447,7 +447,7 @@ var Level1 = {
 
         if ((controls.up.isDown || jumping) && (player.body.onFloor() ||
             player.body.touching.down) && this.time.now > jumpTimer) {
-            player.body.velocity.y = -400;
+            player.body.velocity.y = -420;
             jumpTimer = this.time.now + 750;
             player.animations.play('jump');
             this.salto.play();
